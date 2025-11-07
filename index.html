@@ -331,18 +331,23 @@
     </div>
 
     <script>
-        // Supabase配置 - 你需要替换成自己的配置
-        const SUPABASE_URL = 'https://wcswoklppcfqutcdptgp.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indjc3dva2xwcGNmcXV0Y2RwdGdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MTE4MDIsImV4cCI6MjA3ODA4NzgwMn0.t19r6DbPI8bIXZY7AbuJWl_jvQd8HRauYkMaPYwGEVE';
-        
-        // 初始化Supabase客户端
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
+        // 生成用户ID函数 - 必须先定义这个函数！
+        function generateUserId() {
+            return 'user_' + Math.random().toString(36).substr(2, 9);
+        }
+
         // 当前用户标识
         let currentUserId = localStorage.getItem('userId') || generateUserId();
         localStorage.setItem('userId', currentUserId);
-        
+
         document.addEventListener('DOMContentLoaded', function() {
+            // Supabase配置 - 在DOM加载后初始化
+            const SUPABASE_URL = 'https://wcswoklppcfqutcdptgp.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indjc3dva2xwcGNmcXV0Y2RwdGdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI1MTE4MDIsImV4cCI6MjA3ODA4NzgwMn0.t19r6DbPI8bIXZY7AbuJWl_jvQd8HRauYkMaPYwGEVE';
+            
+            // 初始化Supabase客户端
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
             const wallContainer = document.getElementById('wallContainer');
             const addCardBtn = document.getElementById('addCardBtn');
             const userName = document.getElementById('userName');
@@ -352,14 +357,8 @@
             const cardCounter = document.getElementById('cardCounter');
             const statusIndicator = document.getElementById('statusIndicator');
             
-            // 设置在线状态
-            statusIndicator.innerHTML = '<span class="status-online">● 实时在线</span>';
-            
-            // 加载现有留言
-            loadMessages();
-            
-            // 设置实时监听
-            setupRealtimeSubscription();
+            // 测试连接
+            testConnection();
             
             // 添加卡片按钮事件
             addCardBtn.addEventListener('click', async function() {
@@ -381,6 +380,26 @@
                     await clearAllMessages();
                 }
             });
+            
+            // 测试连接函数
+            async function testConnection() {
+                try {
+                    const { data, error } = await supabase
+                        .from('messages')
+                        .select('count')
+                        .limit(1);
+                    
+                    if (error) throw error;
+                    
+                    statusIndicator.innerHTML = '<span class="status-online">● 实时在线</span>';
+                    loadMessages();
+                    setupRealtimeSubscription();
+                } catch (error) {
+                    console.error('连接失败:', error);
+                    statusIndicator.innerHTML = '<span class="status-offline">● 连接失败</span>';
+                    cardCounter.textContent = '连接失败，请检查配置';
+                }
+            }
             
             // 从数据库加载留言
             async function loadMessages() {
@@ -504,7 +523,7 @@
                     const { error } = await supabase
                         .from('messages')
                         .delete()
-                        .neq('id', 0); // 删除所有记录
+                        .neq('id', 0);
                     
                     if (error) throw error;
                     
@@ -619,11 +638,6 @@
             function updateCardCounter() {
                 const cardCount = document.querySelectorAll('.card').length;
                 cardCounter.textContent = `当前有 ${cardCount} 条留言`;
-            }
-            
-            // 生成用户ID
-            function generateUserId() {
-                return 'user_' + Math.random().toString(36).substr(2, 9);
             }
             
             // HTML转义，防止XSS攻击
