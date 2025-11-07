@@ -296,3 +296,22 @@
         .chat-btn:hover {
             background: #524a7b;
         }
+
+        /* 日记按钮样式 */
+        .diary-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #38a169;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .diary-btn:hover {
+            background: #2f855a;
+        }
+
