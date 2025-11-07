@@ -276,4 +276,23 @@
                 flex: none;
                 width: 100%;
             }
+
+        }
+
+        /* 聊天按钮样式 */
+        .chat-btn {
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #6b5b95;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .chat-btn:hover {
+            background: #524a7b;
         }
