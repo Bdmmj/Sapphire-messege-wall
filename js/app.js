@@ -37,6 +37,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    const chatPageBtn = document.getElementById('chatPageBtn');
+    chatPageBtn.addEventListener('click', function () {
+        window.location.href = 'chat.html';
+    });
+
     // 测试连接函数
     async function testConnection() {
         try {
